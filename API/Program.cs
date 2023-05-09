@@ -9,7 +9,10 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Added DataContext created in the Persistence project.
 builder.Services.AddDbContext<DataContext>(opt => {
+    // Using SQLite as the default database
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
