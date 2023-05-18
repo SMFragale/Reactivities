@@ -16,15 +16,27 @@ builder.Services.AddDbContext<DataContext>(opt => {
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+
+// Add CORS policy to allow local frontend to connect 
+builder.Services.AddCors(opt => {
+    opt.AddPolicy("CorsPolicy", policy => {
+        // Allowing the client to access the backend. The client lives on localhost:3000
+        policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
+    });
+});
+
 var app = builder.Build();
 
-// Middleware
+// Middleware : is a pipeline so the order of operations matters here
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// Needs to match the cors policy defined in the services section.
+app.UseCors("CorsPolicy");
 
 app.UseAuthorization();
 
