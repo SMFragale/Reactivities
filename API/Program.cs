@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
@@ -24,6 +25,10 @@ builder.Services.AddCors(opt => {
         policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
     });
 });
+
+// The Mediator services
+// it needs to know where the mediators/handlers are located.
+builder.Services.AddMediatR(typeof(Application.Activities.List.Handler));
 
 var app = builder.Build();
 
