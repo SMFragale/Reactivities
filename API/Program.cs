@@ -1,34 +1,14 @@
-using MediatR;
+using API.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-// Added DataContext created in the Persistence project.
-builder.Services.AddDbContext<DataContext>(opt => {
-    // Using SQLite as the default database
-    opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-
-
-// Add CORS policy to allow local frontend to connect 
-builder.Services.AddCors(opt => {
-    opt.AddPolicy("CorsPolicy", policy => {
-        // Allowing the client to access the backend. The client lives on localhost:3000
-        policy.AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:3000");
-    });
-});
-
-// The Mediator services
-// it needs to know where the mediators/handlers are located.
-builder.Services.AddMediatR(typeof(Application.Activities.List.Handler));
+//Extension method that contains all external services. It exists so that the Program.cs doesnt get too dirty.
+builder.Services.AddApplicationServices(builder.Configuration);
 
 var app = builder.Build();
 

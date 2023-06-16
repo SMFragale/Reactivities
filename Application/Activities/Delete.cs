@@ -1,34 +1,31 @@
-using AutoMapper;
 using Domain;
 using MediatR;
 using Persistence;
 
 namespace Application.Activities
 {
-    public class Edit
+    public class Delete
     {
-        public class Command : IRequest
-        {
-            // This is the data that will be sent to the server
-            public Activity Activity { get; set; }
+        public class Command : IRequest 
+        { 
+            public Guid Id {get; set;}
         }
 
         public class Handler : IRequestHandler<Command>
         {
-            private readonly IMapper _mapper;
             private readonly DataContext _context;
 
-            public Handler(DataContext context, IMapper mapper)
+            public Handler(DataContext context)
             {
-                _mapper = mapper;
                 _context = context;
             }
 
             public async Task<Unit> Handle(Command request, CancellationToken cancellationToken)
             {
-                var activity = await _context.Activities.FindAsync(request.Activity.Id);
-
-                _mapper.Map(request.Activity, activity);
+                var activity = await _context.Activities.FindAsync(request.Id);
+                // Must check for null before trying to remove
+                
+                _context.Remove(activity);
 
                 await _context.SaveChangesAsync();
                 return Unit.Value;
